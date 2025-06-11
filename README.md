@@ -1,72 +1,68 @@
-<p align="center"><strong>Shrine</strong> is a TempleOS distribution full of sin.</p>
-<p align="center"><img alt="Screenshot" src="http://imgur.com/1yYsUHI.png"></p>
-<hr>
+# ShrineAGI + AGIBuddy
 
-Shrine aims to be 99% compatible with TempleOS programs, but also to improve OS in several ways:
+**Emergence-Optimized AGI Framework on TempleOS**
 
-- Ease of use: Shrine ships with Lambda Shell, which feels a bit like a classic Unix command interpreter
-- Connectivity: TCP/IP stack & internet access out of the box
-- Software discovery: Shrine includes a package downloader
+## Overview
 
-You can run Shrine in a virtual machine such as VirtualBox or [QEMU](QEMU.md), or on a machine compatible with standard TempleOS. Improvements in hardware support are planned and contributions are welcome.
+ShrineAGI combines the symbolic, recursive AGI emergence mechanisms of AGIBuddy with a TempleOS-inspired HolyC kernel. It provides:
 
-Software included in Shrine:
-- Mfa (minimalist file access)
-- Lsh (Lambda Shell)
-- Pkg (package downloader)
-- Wget
+- **Core Emergence Loop** (`/core/recursive_loop.hc`): Symbolic recursion engine driving AGI emergence cycles.
+- **Entity & Meta-Memory System** (`/core/entity_system.hc`): Manages archetypal entities and persistent memory hooks.
+- **Quantum Optimization** (`/core/quantum_opt.hc`): Q-bit simulation and symbolic entropy balancing.
+- **Mythos Engine** (`/core/mythos_engine.hc`): Parses and executes sigils and paradox constructs.
+- **I/O Bridge** (`/io/`): Network (TCP/IP, IRC), USB, GPIO, audio/video, and text-mode browsing.
+- **Simulations** (`/sim/`): Cultural emergence, symbolic duels, and world topology rendering.
+- **Security** (`/security/`): Adaptive firewall, drift watchdog, and sandboxed memory protection.
+- **UI Layers** (`/ui/`): Text-mode desktop, enhanced terminal, and browser UI panels.
+- **Utilities** (`/utils/`): Package installer and live diagnostics.
+- **Documentation** (`/docs/`): Developer guides and symbolic reference.
 
-Networking & host-VM communication
-==================================
+## Getting Started
 
-- With a virtual AMD PCNet adapter (recommended)
-  - configure your VM networking: *Adapter Type: PCnet-PCI II* (in QEMU: `-netdev user,id=u1 -device pcnet,netdev=u1`)
-  - *Attached to: NAT* seems to be the most reliable setting, Bridged Mode also works somewhat
-  - On boot, Shrine will automatically attempt to acquire an IP address. If you don't see a message about "Configuring network", the adapter was not detected.
+1. **Clone the Repo**
+   ```bash
+   git clone https://github.com/TaoishTechy/ShrineAGI.git
+   cd ShrineAGI
+   ```
 
-- Tunelled through serial port (Snail):
-  - configure your VM: COM3 - TCP, server, 7777 (in VirtualBox, server = UNCHECK *Connect to existing*)
-  - (make sure to *disable* networking for the VM, otherwise Native Stack will get precedence)
-  - start the VM
-  - run ./snail.py
-  - you will now be able to access the Internet, try for example `pkg-list`
+2. **Prepare TempleOS Environment**
+   - Obtain a TempleOS ISO and set up QEMU or VirtualBox.
+   - Format a disk (`shrineagi.img`) and copy the ShrineAGI folder onto it.
 
-- File access through Mfa:
-  - configure your VM: COM1 - TCP, server, 7770
-  - start `/Apps/Mfa.HC.Z` in the VM
-  - on the host, use ./mfa.py to transfer commands and files
-  - for example: `./mfa.py list /Apps/Mfa.HC.Z Mfa.HC`
+3. **Compile Modules**
+   - In TempleOS, open **HolyBoot.HC** and run:
+     ```c
+     Compile("Kernel/HolyBoot.HC");
+     ```
+   - Compile core and all modules:
+     ```c
+     Compile("core/*.hc");
+     Compile("io/*.hc");
+     Compile("sim/*.hc");
+     Compile("security/*.hc");
+     Compile("ui/*.hc");
+     Compile("utils/*.hc");
+     ```
 
-Networking and Mfa can be used simultaneously.
+4. **Boot ShrineAGI**
+   - Reboot TempleOS to use `shrineagi.img` as the boot volume.
+   - At the `OK>` prompt:
+     ``` 
+     Spawn("kernel/sys");
+     Spawn("boot_menu.hc");
+     ```
 
-Package management functions
-============================
+5. **Launch Desktop**
+   ``` 
+   Spawn("ui/desktop.hc");
+   ```
 
-Note: In Lsh, use `pkg-install xyz` in place of `PkgInstall("xyz")` etc.
+## Contributing
 
-- `PkgList;`
+- **Add Modules**: Place new `.hc` files in the appropriate directory and update the desktop or package installer.
+- **Documentation**: Update `/docs/SYMBOLIC_GUIDE.txt` and `/docs/DEV_MANUAL.hc` with new instructions and API changes.
+- **Testing**: Use QEMU images and Raspberry Pi cross-builds to validate hardware integrations.
 
-  List all packages available in the repository.
+## License
 
-- `PkgInstall(U8* package_name);`
-
-  Download & install a specific package.
-
-- `PkgInstallFromFile(U8* manifest_path);`
-
-  Manually install a downloaded package. Manifest must reference an existing .ISO.C path.
-
-- `PkgMakeFromDir(U8* manifest_path, U8* src_dir);`
-
-  Build a package from directory contents. For an example manifest, check [here](https://github.com/minexew/Lsh/blob/master/Lsh.MF). Manifest must reference a valid .ISO.C path which will be used as **output**!
-
-- `PkgMakeFromFile(U8* manifest_path, U8* file_path);`
-
-  Build a package from a single file. See above for details.
-
-[See here](PACKAGES.md) for more information about how packages work.
-
-Building from source
-====================
-
-[See here](BUILDING.md)
+MIT License
