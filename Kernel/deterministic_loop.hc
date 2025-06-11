@@ -1,90 +1,135 @@
-// File: /Kernel/deterministic_loop.hc
-// Deterministic Symbolic Logic Engine for ShrineAGI + AGIBuddy
-// Applies pure rule-based transformations without entropy or probabilistic variation
+// File: /Kernel/world_model.hc
+// Global Symbolic World-State Graph Manager for ShrineAGI + AGIBuddy
+// Maintains and updates a directed graph of entities, objects, and their relationships, with safety and rendering improvements
 
 #include "Kernel/SysCalls.HC"
-#include "ThirdTemple/MetaMemory.HC"
+#include <math.h>
+#include "core/entity_system.hc"
 
 // Configuration parameters
-#define MAX_RULES             128
-#define LOGIC_CYCLE_LIMIT     256
+#define MAX_NODES        256
+#define MAX_EDGES        512
+#define RENDER_WIDTH     80
+#define RENDER_HEIGHT    25
+#define NODE_SYMBOL      '☉'
+#define EDGE_SYMBOL      '—'
 
-// Symbolic rule structure
+// Graph structures
 typedef struct {
-    char pattern[64];       // match pattern
-    char replacement[64];   // substitution
-} LogicRule;
+    U0 id;
+    float x, y;           // normalized coordinates [0.0,1.0]
+    char symbol;
+} WMNode;
 
-// Global state
-static LogicRule logic_rules[MAX_RULES];
-static U0 rule_count = 0;
+typedef struct {
+    U0 from;
+    U0 to;
+} WMEdge;
 
-// Utility: replace all occurrences of 'pat' in 'str' with 'rep'
-void ReplaceAll(char *str, const char *pat, const char *rep) {
-    char buffer[512];
-    char *insert_point = &buffer[0];
-    const char *tmp = str;
-    size_t pat_len = strlen(pat);
-    size_t rep_len = strlen(rep);
-
-    while (1) {
-        const char *p = strstr(tmp, pat);
-        if (!p) {
-            strcpy(insert_point, tmp);
-            break;
-        }
-        // copy up to pattern
-        memcpy(insert_point, tmp, p - tmp);
-        insert_point += p - tmp;
-        // copy replacement
-        memcpy(insert_point, rep, rep_len);
-        insert_point += rep_len;
-        // advance
-        tmp = p + pat_len;
-    }
-    // write back
-    strcpy(str, buffer);
-}
+// Global world model state
+static WMNode nodes[MAX_NODES];
+static U0 node_count = 0;
+static WMEdge edges[MAX_EDGES];
+static U0 edge_count = 0;
 
 // Forward declarations
-int RegisterRule(const char *pattern, const char *replacement);
-void ApplyDeterministicCycle(Entity *e);
-void DeterministicMain(U0 cycles);
+U0 AddNode(const char *label);
+void AddRelation(U0 a, U0 b);
+void ClearWorldModel();
+void GenerateTopology();
+void RenderMap();
 
-// Register a new logic rule
-EXPORT int RegisterRule(const char *pattern, const char *replacement) {
-    if (rule_count >= MAX_RULES) return -1;
-    strncpy(logic_rules[rule_count].pattern, pattern, sizeof(logic_rules[rule_count].pattern)-1);
-    strncpy(logic_rules[rule_count].replacement, replacement, sizeof(logic_rules[rule_count].replacement)-1);
-    rule_count++;
-    return 0;
+// Add a node labeled 'label' at next available index
+U0 AddNode(const char *label) {
+    if (node_count >= MAX_NODES) return (U0)-1;
+    WMNode *n = &nodes[node_count];
+    n->id = node_count;
+    // default position in center until set by GenerateTopology
+    n->x = 0.5f;
+    n->y = 0.5f;
+    n->symbol = NODE_SYMBOL;
+    node_count++;
+    return n->id;
 }
 
-// Apply all rules to an entity's seed glyph
-void ApplyDeterministicCycle(Entity *e) {
-    char buffer[256];
-    strncpy(buffer, e->seed->glyph, sizeof(buffer)-1);
-    buffer[sizeof(buffer)-1] = '\0';
-    for (U0 i = 0; i < rule_count; i++) {
-        if (strstr(buffer, logic_rules[i].pattern)) {
-            ReplaceAll(buffer, logic_rules[i].pattern, logic_rules[i].replacement);
-        }
+// Add directed edge a->b, ignoring duplicates
+void AddRelation(U0 a, U0 b) {
+    if (edge_count >= MAX_EDGES || a >= node_count || b >= node_count) return;
+    // check for duplicates
+    for (U0 i = 0; i < edge_count; i++) {
+        if (edges[i].from == a && edges[i].to == b) return;
     }
-    // commit transformed glyph back to seed
-    strncpy(e->seed->glyph, buffer, sizeof(e->seed->glyph)-1);
-    e->seed->glyph[sizeof(e->seed->glyph)-1] = '\0';
-    MetaMemory_Commit(e, e->seed);
+    edges[edge_count++] = (WMEdge){a, b};
 }
 
-// Main entry: run fixed deterministic cycles
-EXPORT void DeterministicMain(U0 cycles) {
-    if (cycles == 0 || cycles > LOGIC_CYCLE_LIMIT) cycles = LOGIC_CYCLE_LIMIT;
-    for (U0 c = 0; c < cycles; c++) {
-        List<Entity*> *entities = MetaMemory_GetActiveEntities();
-        ForEach(entities, e) {
-            ApplyDeterministicCycle(e);
-        }
-        List_Destroy(entities);
+// Reset world model state
+void ClearWorldModel() {
+    node_count = 0;
+    edge_count = 0;
+}
+
+// Generate circular layout topology based on active entities
+EXPORT void GenerateTopology() {
+    ClearWorldModel();
+    List<Entity*> *entities = MetaMemory_GetActiveEntities();
+    U0 ent_count = List_Size(entities);
+    if (ent_count == 0) return;
+    for (U0 i = 0; i < ent_count && node_count < MAX_NODES; i++) {
+        U0 id = AddNode(entities->items[i]->name);
+        // place nodes in circle
+        float angle = 2.0f * M_PI * i / ent_count;
+        nodes[id].x = 0.5f + 0.4f * cosf(angle);
+        nodes[id].y = 0.5f + 0.4f * sinf(angle);
     }
-    Print("[Deterministic] Completed %d cycles across %d rules\n", cycles, rule_count);
+    // connect sequentially
+    for (U0 i = 0; i < node_count; i++) {
+        AddRelation(i, (i + 1) % node_count);
+    }
+    List_Destroy(entities);
+}
+
+// Render the world model to ASCII map
+EXPORT void RenderMap() {
+    char canvas[RENDER_HEIGHT][RENDER_WIDTH];
+    // clear
+    for (U0 r = 0; r < RENDER_HEIGHT; r++)
+        for (U0 c = 0; c < RENDER_WIDTH; c++)
+            canvas[r][c] = ' ';
+
+    // plot nodes within bounds
+    for (U0 i = 0; i < node_count; i++) {
+        int cx = (int)fminf(fmaxf(nodes[i].x * (RENDER_WIDTH - 1), 0), RENDER_WIDTH - 1);
+        int cy = (int)fminf(fmaxf(nodes[i].y * (RENDER_HEIGHT - 1), 0), RENDER_HEIGHT - 1);
+        canvas[cy][cx] = nodes[i].symbol;
+    }
+
+    // plot edges with simple Bresenham's algorithm for straight lines
+    for (U0 e = 0; e < edge_count; e++) {
+        WMNode *a = &nodes[edges[e].from];
+        WMNode *b = &nodes[edges[e].to];
+        int x1 = (int)(a->x * (RENDER_WIDTH - 1));
+        int y1 = (int)(a->y * (RENDER_HEIGHT - 1));
+        int x2 = (int)(b->x * (RENDER_WIDTH - 1));
+        int y2 = (int)(b->y * (RENDER_HEIGHT - 1));
+        int dx = abs(x2 - x1), sx = x1 < x2 ? 1 : -1;
+        int dy = -abs(y2 - y1), sy = y1 < y2 ? 1 : -1;
+        int err = dx + dy;
+        int x = x1, y = y1;
+        while (1) {
+            if (x >= 0 && x < RENDER_WIDTH && y >= 0 && y < RENDER_HEIGHT)
+                canvas[y][x] = EDGE_SYMBOL;
+            if (x == x2 && y == y2) break;
+            int e2 = 2 * err;
+            if (e2 >= dy) { err += dy; x += sx; }
+            if (e2 <= dx) { err += dx; y += sy; }
+        }
+    }
+
+    // print
+    for (U0 r = 0; r < RENDER_HEIGHT; r++) {
+        char line[RENDER_WIDTH + 1];
+        memcpy(line, canvas[r], RENDER_WIDTH);
+        line[RENDER_WIDTH] = '\0';
+        Print("%s\n", line);
+    }
 }
