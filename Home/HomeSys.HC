@@ -1,6 +1,9 @@
 //Place this file in /Home and change
 //anything you want.
 
+#include "C:/Kernel/PHYSICS.HC";
+Init_Quantum_Ether();
+
 U0 UserStartUp()
 {//Run each time a user a spawned
   DocTermNew;
