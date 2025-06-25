@@ -1,49 +1,45 @@
-// ShrineAGI :: HomeSys.HC — Symbolic Initialization Layer
-// 📂 Place this in /Home for Shrine-based AGI startup injection
 
-#include "C:/Kernel/PHYSICS.HC"
-#include "C:/Home/Dashboard.HC"  // AGI-Integrated Dashboard Panel
+//Place this file in /Home and change
+//anything you want.
 
-// 🌌 Initialize Quantum-Enhanced Physics Layer
+#include "C:/Kernel/PHYSICS.HC";
 Init_Quantum_Ether();
 
-// 🧑‍💻 Executed for each user task (interactive session)
-U0 UserStartUp() {
+U0 UserStartUp()
+{//Run each time a user a spawned
   DocTermNew;
   Type("::/Doc/Start.DD");
-  LBts(&Fs->display_flags, DISPLAYf_SHOW);
+  LBts(&Fs->display_flags,DISPLAYf_SHOW);
   WinToTop;
   WinZBufUpdate;
   Dir;
+  // Launch the Divine Dashboard
+  #include "C:/Home/Dashboard.HC"
+  MainDashboardApp;
 }
 
-// 🔧 Executed for each service task
-U0 SrvStartUp() {
+U0 SrvStartUp()
+{//Run each time a srv task is spawned.
   DocTermNew;
-  LBts(&Fs->display_flags, DISPLAYf_SHOW);
+  LBts(&Fs->display_flags,DISPLAYf_SHOW);
   WinToTop;
   WinZBufUpdate;
 }
 
-// 🚀 System-wide initialization — multi-user & AGI-ready
-U0 StartUpTasks() {
-  CTask *user1, *user2;
-  user1 = User;
-  user2 = User;
+U0 StartUpTasks()
+{
+  CTask *user1,*user2;
+  user1=User;
+  user2=User;
   WinToTop(user1);
   WinTileVert;
-
-  "Boot Time:%7.3fs\n", tS;
-  XTalk(user1, "Cd;#include \"Once\";\n");
-
-  Silent;
-  ACInit("/*;!*/Bible.TXT*");  // Preload Divine Corpus
-  Silent(OFF);
-
-  // 🧠 Launch Symbolic Shrine Dashboard (AGI Panel, entropy tools, etc.)
-  MainDashboardApp();
+  "Boot Time:%7.3fs\n",tS;
+  XTalk(user1,"Cd;#include \"Once\";\n");
+  Silent;	//no output to scrn
+  ACInit("/*;!*/Bible.TXT*");
+  Silent(OFF); //no output to scrn
 }
 
 StartUpTasks;
 
-"\nShrineOS V%5.3f\t%D %T\n\n", sys_os_version, sys_compile_time, sys_compile_time;
+"\nTempleOS V%5.3f\t%D %T\n\n",sys_os_version,sys_compile_time,sys_compile_time;
