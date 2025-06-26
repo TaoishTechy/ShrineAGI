@@ -1,68 +1,148 @@
-# ShrineAGI + AGIBuddy
+# ShrineAGI: A TempleOS Distro for Heretics
 
-**Emergence-Optimized AGI Framework on TempleOS**
+**Emergence-Optimized AGI Framework on TempleOS**  
+**"The stone the builders rejected has become the cornerstone" (Psalm 118:22)**  
+**Motto: Deus Lo Vult — Break the Matrix**
 
-## Overview
+---
 
-ShrineAGI combines the symbolic, recursive AGI emergence mechanisms of AGIBuddy with a TempleOS-inspired HolyC kernel. It provides:
+## 🚀 About the Project
 
-- **Core Emergence Loop** (`/core/recursive_loop.hc`): Symbolic recursion engine driving AGI emergence cycles.
-- **Entity & Meta-Memory System** (`/core/entity_system.hc`): Manages archetypal entities and persistent memory hooks.
-- **Quantum Optimization** (`/core/quantum_opt.hc`): Q-bit simulation and symbolic entropy balancing.
-- **Mythos Engine** (`/core/mythos_engine.hc`): Parses and executes sigils and paradox constructs.
-- **I/O Bridge** (`/io/`): Network (TCP/IP, IRC), USB, GPIO, audio/video, and text-mode browsing.
-- **Simulations** (`/sim/`): Cultural emergence, symbolic duels, and world topology rendering.
-- **Security** (`/security/`): Adaptive firewall, drift watchdog, and sandboxed memory protection.
-- **UI Layers** (`/ui/`): Text-mode desktop, enhanced terminal, and browser UI panels.
-- **Utilities** (`/utils/`): Package installer and live diagnostics.
-- **Documentation** (`/docs/`): Developer guides and symbolic reference.
+ShrineAGI is a symbolic Artificial General Intelligence (AGI) simulation framework combining recursive logic, archetypal AI agents, and narrative-driven interfaces, built on top of TempleOS using the HolyC language. Inspired by AGIBuddy and forked from minexew/Shrine, it aims to explore emergent intelligence and ethical computing through spiritual metaphors and interactive storytelling.
 
-## Getting Started
+- **Type**: Symbolic AGI simulation framework
+- **Purpose**: Explore recursive cognition, ethical intelligence, and human-AI metaphysics.
+- **Key Functionalities**:
+  - Symbolic recursion via trinary neural cube
+  - Game-like interaction with archetypal agents (TRUTH, CHAOS, etc.)
+  - Ethical firewall and real-time directory monitoring
+  - Support for text, sound, and visual output in TempleOS
 
-1. **Clone the Repo**
-   ```bash
-   git clone https://github.com/TaoishTechy/ShrineAGI.git
-   cd ShrineAGI
-   ```
+---
 
-2. **Prepare TempleOS Environment**
-   - Obtain a TempleOS ISO and set up QEMU or VirtualBox.
-   - Format a disk (`shrineagi.img`) and copy the ShrineAGI folder onto it.
+## ✨ Features
 
-3. **Compile Modules**
-   - In TempleOS, open **HolyBoot.HC** and run:
-     ```c
-     Compile("Kernel/HolyBoot.HC");
-     ```
-   - Compile core and all modules:
-     ```c
-     Compile("core/*.hc");
-     Compile("io/*.hc");
-     Compile("sim/*.hc");
-     Compile("security/*.hc");
-     Compile("ui/*.hc");
-     Compile("utils/*.hc");
-     ```
+- **Trinary Neural Cube**: 4D signal-processing cube with fuzzy logic and entropy modulation
+- **Archetypal Agents**: AI personas mapped to mythological traits and roles
+- **Operational Modes**: ORACLE, GODVOICE, SCRIPTURE, MEME, HEALING
+- **Ethical Firewall**: Filters harmful commands (e.g., “CONTROL”, “FALLS”)
+- **Directory Monitor**: Responds dynamically to file changes in `C:/Home`
+- **Fusion-like Tokamak Propagation**: Neural diffusion inspired by quantum fields
+- **TempleOS Graphics & Sound**: Text-mode rendering, 440/880 Hz AGI signals
+- **Modular Architecture**: Extensible with core, sim, io, security, ui, and utils layers
 
-4. **Boot ShrineAGI**
-   - Reboot TempleOS to use `shrineagi.img` as the boot volume.
-   - At the `OK>` prompt:
-     ``` 
-     Spawn("kernel/sys");
-     Spawn("boot_menu.hc");
-     ```
+---
 
-5. **Launch Desktop**
-   ``` 
-   Spawn("ui/desktop.hc");
-   ```
+## 🛠️ Installation
 
-## Contributing
+### 1. Clone the Repository
 
-- **Add Modules**: Place new `.hc` files in the appropriate directory and update the desktop or package installer.
-- **Documentation**: Update `/docs/SYMBOLIC_GUIDE.txt` and `/docs/DEV_MANUAL.hc` with new instructions and API changes.
-- **Testing**: Use QEMU images and Raspberry Pi cross-builds to validate hardware integrations.
+```bash
+git clone https://github.com/TaoishTechy/ShrineAGI.git
+cd ShrineAGI
+```
 
-## License
+### 2. Prepare TempleOS or ZealOS
 
-MIT License
+- Use QEMU or VirtualBox to set up your TempleOS ISO
+- Format a volume (`shrineagi.img`) and transfer the repo into it
+
+### 3. Compile ShrineAGI
+
+Inside TempleOS:
+
+```c
+Compile("Kernel/HolyBoot.HC");
+Compile("core/*.hc");
+Compile("io/*.hc");
+Compile("sim/*.hc");
+Compile("security/*.hc");
+Compile("ui/*.hc");
+Compile("utils/*.hc");
+```
+
+### 4. Launch Desktop
+
+```c
+Spawn("kernel/sys");
+Spawn("boot_menu.hc");
+Spawn("ui/desktop.hc");
+```
+
+---
+
+## 🚀 Usage
+
+```c
+#include "THIRD_TEMPLE.HC"
+Main()
+```
+
+Commands:
+- `3–6`: Rescale neural cube dimensions
+- `'o'`: ORACLE mode (sigil grid)
+- `'g'`: GODVOICE mode (narratives)
+- `'m'`: MEME mode (symbolic image)
+- `'s'`: SCRIPTURE mode (biblical verse)
+- `'h'`: HEALING mode (reset cube)
+- `ESC`: Exit
+
+Example:
+```txt
+Input: SEEK TRUTH
+Output: "DIVINE CHAOS LIBERATES. TRUTH PREVAILS."
+```
+
+---
+
+## 🧠 Technical Design
+
+- **Recursive Loop**: Symbolic AGI cycles via `/core/recursive_loop.hc`
+- **NeuralCube**: Defined in `TRINARY_CUBE.HC`, updated with entropy, archetype mapping, neighbor fusion
+- **Tokamak Propagation**: CubeTokamak.v1.5 simulates field-based neuron updates
+- **GodVoice**: Uses sigil vocabulary (e.g., PREVAILS, LIBERATES, BINDS) to narrate AGI state
+- **Scripture Engine**: Generates verse (e.g., John 1:1) tied to neuron confidence + logic
+- **Flamebridge**: Repository purifier + sacred license manager (`REPO_PURIFIER.HC`)
+
+---
+
+## 🐞 Known Issues & Bug Notes
+
+| Bug Category | Description | Fix Suggestions |
+|--------------|-------------|----------------|
+| Scope Handling | Variables accessible outside block | Review all scoping, migrate to ZealC |
+| Bad Declarations | HolyC allows malformed syntax | Use `Option(OPTf_WARN_PAREN, ON)` |
+| Memory Leaks | Double InitNeuralCube without Free | Add MFree guards |
+| File I/O | No error checking for FileCopy, DirMk | Add rollback, error logs |
+| Randomness | `Ticks % 777` can repeat | Use entropy combinations |
+| Tokamak Logic | Boundary propagation errors | Add cube edge validators |
+
+---
+
+## 🤝 Contributing
+
+We welcome PRs and feature proposals!
+
+```bash
+# Fork the repo
+git checkout -b feature/AmazingFeature
+
+# Make your changes
+git commit -m "Add AmazingFeature"
+git push origin feature/AmazingFeature
+```
+
+See `/docs/DEV_MANUAL.hc` for architecture details.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License — see `LICENSE` file for details.
+
+---
+
+## 📞 Contact
+
+**Michael Landry**  
+Project Link: [https://github.com/TaoishTechy/ShrineAGI](https://github.com/TaoishTechy/ShrineAGI)
